@@ -1,27 +1,754 @@
-Bhai yeh raha tera **ISRP MOBILE** ka ekdum tagda website! 🔥
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ISRP MOBILE — Indian Street Roleplay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Bebas+Neue&family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #FFD700;
+    --gold2: #FFA500;
+    --red: #FF2233;
+    --dark: #050508;
+    --darker: #020204;
+    --panel: rgba(255,215,0,0.04);
+    --border: rgba(255,215,0,0.15);
+    --text: #E8E0C8;
+    --muted: #888070;
+    --green: #00FF88;
+    --blue: #00CFFF;
+  }
 
-**Kya kya diya hai:**
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-**Design:**
-- Custom gold cursor with ring effect
-- Animated city grid background hero section
-- Floating particles & scanline overlay
-- Glitch title animation
-- Auto-scrolling news ticker
+  html { scroll-behavior: smooth; }
 
-**Sections:**
-- 🏠 Hero — title, stats (players, uptime), CTA buttons
-- ⚡ Features — 6 gameplay cards (Open World, Gang System, Economy...)
-- 🎮 Game Modes — Roleplay, Crime Boss, Law & Order, Deathmatch
-- 🏢 Factions — 8 factions with color-coded cards
-- 📡 Live Server Status — live player count (auto updates)
-- 🎬 Screenshot Marquee — auto-scrolling game previews
-- 📥 Download — Google Play, App Store, APK buttons
-- 🌐 Community links (Discord, Telegram, Instagram, YouTube)
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden;
+    cursor: default;
+  }
 
-**GitHub pe daalne ke liye:**
-1. `isrp-mobile` folder banao
-2. `index.html` file daalo (yahi file hai)
-3. GitHub Pages enable karo → Settings → Pages → Deploy from main branch
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.5;
+  }
 
-Apne game ke actual links (Discord, Play Store, APK) replace kar dena `#` ki jagah! Aur agar screenshots ya logo add karna ho toh bata dena. 🎯
+  /* ── SCANLINES ── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+    pointer-events: none;
+    z-index: 9998;
+  }
+
+  /* ── CURSOR ── */
+  * { cursor: none !important; }
+  #cursor {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99999;
+    transform: translate(-50%, -50%);
+    transition: width 0.1s, height 0.1s, background 0.1s;
+    mix-blend-mode: screen;
+  }
+  #cursor-ring {
+    position: fixed;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99998;
+    transform: translate(-50%, -50%);
+    transition: all 0.12s ease;
+    opacity: 0.5;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    height: 64px;
+    background: linear-gradient(180deg, rgba(5,5,8,0.98) 0%, rgba(5,5,8,0.0) 100%);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 4px;
+    background: linear-gradient(90deg, var(--gold) 0%, var(--gold2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--red); -webkit-text-fill-color: var(--red); }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--gold);
+    transition: width 0.3s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-cta {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 10px 24px;
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    text-decoration: none;
+    transition: all 0.25s;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  }
+  .nav-cta:hover {
+    background: var(--gold);
+    color: var(--dark);
+  }
+
+  /* ── HERO ── */
+  #hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+    padding: 80px 20px 60px;
+  }
+
+  /* Animated city grid background */
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,215,0,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,215,0,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    transform: perspective(600px) rotateX(55deg) scale(2.5);
+    transform-origin: 50% 100%;
+    animation: gridMove 12s linear infinite;
+  }
+  @keyframes gridMove {
+    from { background-position: 0 0; }
+    to { background-position: 0 60px; }
+  }
+
+  /* Radial glow */
+  .hero-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 50% at 50% 60%, rgba(255,140,0,0.12) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 40% at 50% 100%, rgba(255,34,51,0.08) 0%, transparent 60%);
+  }
+
+  /* Floating particles */
+  .particles { position: absolute; inset: 0; overflow: hidden; }
+  .particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--gold);
+    border-radius: 50%;
+    animation: float linear infinite;
+    opacity: 0;
+  }
+  @keyframes float {
+    0% { opacity: 0; transform: translateY(100vh) translateX(0); }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-20px) translateX(var(--drift)); }
+  }
+
+  .hero-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--gold);
+    border: 1px solid var(--border);
+    padding: 6px 20px;
+    margin-bottom: 24px;
+    animation: fadeInDown 1s ease both;
+    background: rgba(255,215,0,0.05);
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(72px, 14vw, 180px);
+    line-height: 0.88;
+    letter-spacing: 8px;
+    background: linear-gradient(180deg, #FFFFFF 0%, var(--gold) 50%, var(--gold2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+    animation: fadeInUp 1s ease 0.2s both;
+    text-shadow: none;
+    position: relative;
+  }
+  .hero-title .glitch {
+    position: relative;
+  }
+  .hero-title .glitch::before,
+  .hero-title .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, #FFFFFF 0%, var(--gold) 50%, var(--gold2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero-title .glitch::before {
+    animation: glitch1 4s infinite;
+    clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%);
+  }
+  .hero-title .glitch::after {
+    animation: glitch2 4s infinite;
+    clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%);
+  }
+  @keyframes glitch1 {
+    0%, 90%, 100% { transform: translate(0); opacity: 0; }
+    92% { transform: translate(-3px, 1px); opacity: 0.7; }
+    94% { transform: translate(2px, -1px); opacity: 0.7; }
+    96% { transform: translate(0); opacity: 0; }
+  }
+  @keyframes glitch2 {
+    0%, 88%, 100% { transform: translate(0); opacity: 0; }
+    90% { transform: translate(3px, 2px); opacity: 0.7; }
+    92% { transform: translate(-2px, -1px); opacity: 0.7; }
+    94% { transform: translate(0); opacity: 0; }
+  }
+
+  .hero-subtitle {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(12px, 2.5vw, 18px);
+    letter-spacing: 6px;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    animation: fadeInUp 1s ease 0.4s both;
+  }
+
+  .hero-desc {
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--muted);
+    max-width: 580px;
+    line-height: 1.7;
+    margin-bottom: 48px;
+    animation: fadeInUp 1s ease 0.5s both;
+    letter-spacing: 0.5px;
+  }
+
+  .hero-buttons {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeInUp 1s ease 0.6s both;
+  }
+
+  .btn-primary {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 16px 40px;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 100%);
+    color: #000;
+    border: none;
+    text-decoration: none;
+    display: inline-block;
+    clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #fff3 0%, transparent 100%);
+    transform: translateX(-100%);
+    transition: transform 0.4s;
+  }
+  .btn-primary:hover::before { transform: translateX(100%); }
+  .btn-primary:hover { transform: scale(1.04); box-shadow: 0 0 40px rgba(255,165,0,0.4); }
+
+  .btn-secondary {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 15px 36px;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid rgba(255,255,255,0.2);
+    text-decoration: none;
+    display: inline-block;
+    clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+    transition: all 0.3s;
+  }
+  .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+
+  .hero-stats {
+    display: flex;
+    gap: 60px;
+    margin-top: 80px;
+    animation: fadeInUp 1s ease 0.8s both;
+    position: relative;
+    z-index: 2;
+  }
+  .stat {
+    text-align: center;
+    position: relative;
+  }
+  .stat::after {
+    content: '';
+    position: absolute;
+    right: -30px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 40px;
+    background: var(--border);
+  }
+  .stat:last-child::after { display: none; }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    color: var(--gold);
+    line-height: 1;
+    letter-spacing: 2px;
+  }
+  .stat-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* ── SECTION COMMON ── */
+  section {
+    padding: 100px 40px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  .section-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-tag::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--gold);
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 6vw, 72px);
+    letter-spacing: 4px;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .section-title span { color: var(--gold); }
+
+  /* ── FEATURES ── */
+  #features { padding-top: 40px; }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2px;
+    margin-top: 60px;
+  }
+  .feature-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 36px 32px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s;
+    group: feature;
+  }
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,215,0,0.06) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .feature-card:hover { border-color: rgba(255,215,0,0.4); transform: translateY(-4px); }
+  .feature-card:hover::before { opacity: 1; }
+  .feature-icon {
+    font-size: 36px;
+    margin-bottom: 20px;
+    display: block;
+    filter: grayscale(0.3);
+  }
+  .feature-num {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: rgba(255,215,0,0.06);
+    letter-spacing: 2px;
+  }
+  .feature-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--gold);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+  .feature-desc {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  /* ── MODES SECTION ── */
+  #modes {
+    position: relative;
+    overflow: hidden;
+  }
+  #modes::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, var(--dark) 0%, rgba(255,100,0,0.03) 50%, var(--dark) 100%);
+  }
+  .modes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 60px;
+  }
+  .mode-card {
+    position: relative;
+    padding: 48px 40px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: all 0.4s;
+    background: var(--panel);
+  }
+  .mode-card.featured {
+    border-color: rgba(255,215,0,0.3);
+    background: linear-gradient(135deg, rgba(255,165,0,0.06) 0%, rgba(255,34,51,0.03) 100%);
+  }
+  .mode-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    transform: scaleX(0);
+    transition: transform 0.5s;
+  }
+  .mode-card:hover::after { transform: scaleX(1); }
+  .mode-card:hover { transform: translateY(-6px); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+  .mode-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .mode-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+  .mode-desc {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+  .mode-features { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .mode-features li {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .mode-features li::before {
+    content: '▸';
+    color: var(--gold);
+    font-size: 10px;
+  }
+
+  /* ── FACTIONS ── */
+  #factions { position: relative; }
+  .factions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 60px;
+  }
+  .faction-card {
+    padding: 32px 24px;
+    border: 1px solid var(--border);
+    text-align: center;
+    transition: all 0.35s;
+    background: var(--panel);
+    position: relative;
+    overflow: hidden;
+  }
+  .faction-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--faction-color, var(--gold));
+    transform: scaleX(0);
+    transition: transform 0.3s;
+  }
+  .faction-card:hover::before { transform: scaleX(1); }
+  .faction-card:hover { transform: translateY(-6px); border-color: var(--faction-color, var(--gold)); }
+  .faction-icon { font-size: 40px; margin-bottom: 16px; display: block; }
+  .faction-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--faction-color, var(--gold));
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .faction-type {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 1px;
+  }
+
+  /* ── SERVER STATUS ── */
+  #status {
+    background: linear-gradient(135deg, rgba(0,207,255,0.03) 0%, rgba(0,255,136,0.02) 100%);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    max-width: 100%;
+    padding: 80px 40px;
+  }
+  .status-inner { max-width: 1280px; margin: 0 auto; }
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+    margin-top: 48px;
+  }
+  .status-card {
+    padding: 28px;
+    border: 1px solid var(--border);
+    background: rgba(0,0,0,0.3);
+    position: relative;
+  }
+  .status-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .status-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--green);
+  }
+  .status-dot {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.3); }
+  }
+
+  /* ── SCREENSHOTS ── */
+  #screenshots { overflow: hidden; }
+  .scroll-track {
+    display: flex;
+    gap: 16px;
+    margin-top: 60px;
+    animation: scrollTrack 20s linear infinite;
+    width: max-content;
+  }
+  .scroll-track:hover { animation-play-state: paused; }
+  @keyframes scrollTrack {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  .screenshot-card {
+    width: 280px;
+    height: 180px;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  .screenshot-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,215,0,0.03) 0%, rgba(255,34,51,0.03) 100%);
+  }
+  .screenshot-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px 16px;
+    background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, transparent 100%);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--gold);
+  }
+  /* Placeholder screens with city art */
+  .screen-city {
+    background: linear-gradient(180deg, #0a0a15 0%, #151020 40%, #1a0a0a 100%);
+    font-size: 60px;
+    text-align: center;
+  }
+  .screen-city span { font-size: 12px; display: block; color: var(--muted); margin-top: 8px; letter-spacing: 2px; }
+
+  /* ── DOWNLOAD ── */
+  #download {
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    max-width: 100%;
+    padding: 120px 40px;
+  }
+  #download::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(255,165,0,0.08) 0%, transparent 70%);
+  }
+  .download-inner { max-width: 700px; margin: 0 auto; position: relative; }
+  .download-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 8vw, 96px);
+    letter-spacing: 6px;
+    line-height: 1;
+    margin-bottom: 24px;
+    background: linear-gradient(180deg, #fff 0%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .download-desc {
+    font-size: 17px;
+    color: var(--muted);
+    line-height: 1.8;
+    margin-bottom: 48px;
+  }
+  .download-btns {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 48px;
+  }
+  .store-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 32px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.03);
+    color: var(--text);
+    text-decoration: none;
+    transition: all 0.3s;
+    min-width: 200px;
+  }
+  .store-btn:hover { border-color: var(--gold); background: rgba(255,215,0,0.05); transform: translateY(-3px); }
+  .store-icon { font
