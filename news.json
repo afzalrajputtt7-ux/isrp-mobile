@@ -1,1 +1,16 @@
-
+[
+  {
+    "id": 1,
+    "title": "Welcome to ISRP Mobile!",
+    "description": "Brothers, the new India Roleplay Mobile launcher is officially live. Enjoy the game!",
+    "date": "28-05-2026",
+    "image_url": "https://raw.githubusercontent.com/afzalrajputtt7-ux/isrp-mobile/main/index.html"
+  },
+  {
+    "id": 2,
+    "title": "Big Giveaway Event!",
+    "description": "Get ready for a massive 300 Million in-game cash giveaway celebrating our server opening!",
+    "date": "29-05-2026",
+    "image_url": "https://raw.githubusercontent.com/afzalrajputtt7-ux/isrp-mobile/main/index.html"
+  }
+]
